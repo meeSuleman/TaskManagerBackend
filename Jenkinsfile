@@ -5,6 +5,8 @@ pipeline {
         BACKEND_REPO = 'https://github.com/meeSuleman/TaskManagerBackend.git'
         DOCKER_REGISTRY = 'https://hub.docker.com/repository/docker/meesuleman/task-manager-backend'
         DOCKER_CREDENTIALS = credentials('dockerhubToken')
+        DOCKER_CREDENTIALS_PSW = 'treble@city'
+        DOCKER_CREDENTIALS_USR = 'meesuleman'
         GITHUB_CREDENTIALS = credentials('GithubToken')
         SONARQUBE_ENV = 'SonarQube' 
     }
@@ -47,20 +49,13 @@ pipeline {
             }
         }
 
-        stage('Verify docker installation'){
-            steps{
-                script{
-                    sh '/usr/local/bin/docker --version'
-                }
-            }
-        }
-        
         stage('Build Docker Image') {
             steps {
                 script {
                     dir('backend') {
                         def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                        docker.build("${DOCKER_REGISTRY}:${commitHash}")
+                        sh "docker build -t ${DOCKER_REGISTRY}:${commitHash} ."
+                        sh "docker tag ${DOCKER_REGISTRY}:${commitHash} ${DOCKER_REGISTRY}:latest"
                     }
                 }
             }
@@ -69,14 +64,16 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('', DOCKER_CREDENTIALS) {
-                        def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                        docker.image("${DOCKER_REGISTRY}:${commitHash}").push()
-                        docker.image("${DOCKER_REGISTRY}:${commitHash}").push('latest')
-                    }
+                    def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+
+                    sh "echo ${DOCKER_CREDENTIALS_PSW} | docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin"
+
+                    sh "docker push ${DOCKER_REGISTRY}:${commitHash}"
+                    sh "docker push ${DOCKER_REGISTRY}:latest"
                 }
             }
         }
+
     }
 
     post {
