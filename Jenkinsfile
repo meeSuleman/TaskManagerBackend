@@ -46,6 +46,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Verify docker installation'){
+            steps{
+                script{
+                    sh '/usr/local/bin/docker --version'
+                }
+            }
+        }
         
         stage('Build Docker Image') {
             steps {
