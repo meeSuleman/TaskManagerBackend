@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         BACKEND_REPO = 'https://github.com/meeSuleman/TaskManagerBackend.git'
-        DOCKER_REGISTRY = 'https://hub.docker.com/repository/docker/meesuleman/task-manager-backend'
+        DOCKER_REGISTRY = 'meesuleman/task-manager-backend'
         DOCKER_CREDENTIALS = credentials('dockerhubToken')
         DOCKER_CREDENTIALS_PSW = 'treble@city'
         DOCKER_CREDENTIALS_USR = 'meesuleman'
