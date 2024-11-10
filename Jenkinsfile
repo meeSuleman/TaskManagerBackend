@@ -23,8 +23,9 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
+                    def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                     withSonarQubeEnv(SONARQUBE_ENV) {
-                        sh 'sonar-scanner -Dsonar.projectKey=taskmanagerbackend -Dsonar.sources=src'
+                        sh 'sonar-scanner -Dsonar.projectKey=task-manager-backend -Dsonar.sources=src'
                     }
                 }
             }
