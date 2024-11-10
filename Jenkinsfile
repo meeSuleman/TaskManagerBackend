@@ -41,7 +41,6 @@ pipeline {
             steps {
                 script {
                     dir('backend') {
-                        sh 'bundle install'
                         sh 'RAILS_ENV=test bundle exec rake db:create db:migrate'
                         sh 'bundle exec rspec'
                     }
