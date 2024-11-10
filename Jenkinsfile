@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         BACKEND_REPO = 'https://github.com/meeSuleman/TaskManagerBackend.git'
-        DOCKER_REGISTRY = 'https://hub.docker.com/r/meesuleman/demorepo'
+        DOCKER_REGISTRY = 'https://hub.docker.com/repository/docker/meesuleman/task-manager-backend'
         DOCKER_CREDENTIALS = credentials('dockerhubToken')
         GITHUB_CREDENTIALS = credentials('GithubToken')
         SONARQUBE_ENV = 'SonarQube' 
@@ -41,7 +41,6 @@ pipeline {
             steps {
                 script {
                     dir('backend') {
-                        sh 'RAILS_ENV=test bundle exec rake db:create db:migrate'
                         sh 'bundle exec rspec'
                     }
                 }
