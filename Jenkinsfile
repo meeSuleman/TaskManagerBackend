@@ -6,6 +6,7 @@ pipeline {
         DOCKER_REGISTRY = 'https://hub.docker.com/r/meesuleman/demorepo'
         DOCKER_CREDENTIALS = credentials('dockerhubToken')
         GITHUB_CREDENTIALS = credentials('GithubToken')
+        SONARQUBE_ENV = 'SonarQube' 
     }
 
     stages {
@@ -13,20 +14,27 @@ pipeline {
         stage('Code Checkout') {
             steps {
                 script {
-                    // Checkout backend code
                     dir('backend') {
                         git url: "${env.BACKEND_REPO}", credentialsId: "${env.GITHUB_CREDENTIALS}", branch: 'main'
                     }
                 }
             }
         }
-
-        stage('Static Code Analysis') {
+        stage('SonarQube Analysis') {
             steps {
-                dir('backend') {
-                    sh 'sonar-scanner' // Assumes SonarQube configuration in Jenkins
+                script {
+                    withSonarQubeEnv(SONARQUBE_ENV) {
+                        sh 'sonar-scanner -Dsonar.projectKey=taskmanagerbackend -Dsonar.sources=src'
+                    }
                 }
-            }   
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
         }
     }
 }
