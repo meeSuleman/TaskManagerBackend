@@ -54,8 +54,8 @@ pipeline {
                 script {
                     dir('backend') {
                         def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                        sh "docker build -t ${DOCKER_REGISTRY}:${commitHash} ."
-                        sh "docker tag ${DOCKER_REGISTRY}:${commitHash} ${DOCKER_REGISTRY}:latest"
+                        sh "/usr/local/bin/docker build -t ${DOCKER_REGISTRY}:${commitHash} ."
+                        sh "/usr/local/bin/docker tag ${DOCKER_REGISTRY}:${commitHash} ${DOCKER_REGISTRY}:latest"
                     }
                 }
             }
@@ -66,10 +66,10 @@ pipeline {
                 script {
                     def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
 
-                    sh "echo ${DOCKER_CREDENTIALS_PSW} | docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin"
+                    sh "echo ${DOCKER_CREDENTIALS_PSW} | /usr/local/bin/docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin"
 
-                    sh "docker push ${DOCKER_REGISTRY}:${commitHash}"
-                    sh "docker push ${DOCKER_REGISTRY}:latest"
+                    sh "/usr/local/bin/docker push ${DOCKER_REGISTRY}:${commitHash}"
+                    sh "/usr/local/bin/docker push ${DOCKER_REGISTRY}:latest"
                 }
             }
         }
