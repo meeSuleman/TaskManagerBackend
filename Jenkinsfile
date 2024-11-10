@@ -20,12 +20,19 @@ pipeline {
                 }
             }
         }
+        stage('Verify SonarScanner Installation') {
+            steps {
+                script {
+                    sh '/usr/local/bin/sonar-scanner --version'
+                }
+            }
+        }
         stage('SonarQube Analysis') {
             steps {
                 script {
                     def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                     withSonarQubeEnv(SONARQUBE_ENV) {
-                        sh 'sonar-scanner -Dsonar.projectKey=task-manager-backend -Dsonar.sources=src'
+                        sh '/usr/local/bin/sonar-scanner -Dsonar.projectKey=task-manager-backend -Dsonar.projectName="Task Manager" -Dsonar.projectVersion=1.0 -Dsonar.sources=.'
                     }
                 }
             }
