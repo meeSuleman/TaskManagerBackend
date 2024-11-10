@@ -62,9 +62,11 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                script {
-                    sh "echo ${DOCKER_CREDENTIALS_PSW} | /usr/local/bin/docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin"
-                    sh "/usr/local/bin/docker push ${DOCKER_REGISTRY}:latest"
+                timeout(time: 20, unit: 'MINUTES') {
+                    script {
+                        sh "echo ${DOCKER_CREDENTIALS_PSW} | /usr/local/bin/docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin"
+                        sh "/usr/local/bin/docker push ${DOCKER_REGISTRY}:latest"
+                    }
                 }
             }
         }
