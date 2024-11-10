@@ -20,13 +20,6 @@ pipeline {
                 }
             }
         }
-        stage('Verify SonarScanner Installation') {
-            steps {
-                script {
-                    sh '/usr/local/bin/sonar-scanner --version'
-                }
-            }
-        }
         stage('SonarQube Analysis') {
             steps {
                 script {
@@ -43,6 +36,47 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
+        }
+        stage('Run Tests') {
+            steps {
+                script {
+                    dir('backend') {
+                        sh 'bundle install'
+                        sh 'RAILS_ENV=test bundle exec rake db:create db:migrate'
+                        sh 'bundle exec rspec'
+                    }
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    dir('backend') {
+                        def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                        docker.build("${DOCKER_REGISTRY}:${commitHash}")
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('', DOCKER_CREDENTIALS) {
+                        def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                        docker.image("${DOCKER_REGISTRY}:${commitHash}").push()
+                        docker.image("${DOCKER_REGISTRY}:${commitHash}").push('latest')
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            deleteDir()
         }
     }
 }
