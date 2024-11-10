@@ -54,7 +54,7 @@ pipeline {
                 script {
                     dir('backend') {
                         sh "/usr/local/bin/docker build -t ${DOCKER_REGISTRY}:latest ."
-                        sh "/usr/local/bin/docker tag ${DOCKER_REGISTRY}:${commitHash} ${DOCKER_REGISTRY}:latest"
+                        sh "/usr/local/bin/docker tag ${DOCKER_REGISTRY}:latest ${DOCKER_REGISTRY}:latest"
                     }
                 }
             }
