@@ -41,7 +41,7 @@ pipeline {
             steps {
                 script {
                     dir('backend') {
-                        sh 'bundle exec rspec'
+                        sh 'rspec'
                     }
                 }
             }
