@@ -22,23 +22,23 @@ pipeline {
                 }
             }
         }
-        // stage('SonarQube Analysis') {
-        //     steps {
-        //         script {
-        //             def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        //             withSonarQubeEnv(SONARQUBE_ENV) {
-        //                 sh '/usr/local/bin/sonar-scanner -Dsonar.projectKey=task-manager-backend -Dsonar.projectName="Task Manager" -Dsonar.projectVersion=1.0 -Dsonar.sources=.'
-        //             }
-        //         }
-        //     }
-        // }
-        // stage('Quality Gate') {
-        //     steps {
-        //         timeout(time: 5, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withSonarQubeEnv(SONARQUBE_ENV) {
+                        sh '/usr/local/bin/sonar-scanner -Dsonar.projectKey=task-manager-backend -Dsonar.projectName="Task Manager" -Dsonar.projectVersion=1.0 -Dsonar.sources=.'
+                    }
+                }
+            }
+        }
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Run Tests') {
             steps {
                 script {
@@ -64,8 +64,6 @@ pipeline {
             steps {
                 script {
                     sh "echo ${DOCKER_CREDENTIALS_PSW} | /usr/local/bin/docker login -u ${DOCKER_CREDENTIALS_USR} --password-stdin"
-
-                    sh "/usr/local/bin/docker push ${DOCKER_REGISTRY}:latest"
                     sh "/usr/local/bin/docker push ${DOCKER_REGISTRY}:latest"
                 }
             }
