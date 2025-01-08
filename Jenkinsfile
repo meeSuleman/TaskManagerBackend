@@ -72,9 +72,19 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Cleaning up workspace...'
-            deleteDir()
+        success {
+            emailext(
+                to: 'muhammad.suleman@camp1.tkxel.com',
+                subject: 'Pipeline Success: ${JOB_NAME}',
+                body: 'Pipeline ${JOB_NAME} succeeded. Build number: ${BUILD_NUMBER}.'
+            )
+        }
+        failure {
+            emailext(
+                to: 'muhammad.suleman@camp1.tkxel.com',
+                subject: 'Pipeline Failed: ${JOB_NAME}',
+                body: 'Pipeline ${JOB_NAME} failed. Check Jenkins logs for details.'
+            )
         }
     }
 }
