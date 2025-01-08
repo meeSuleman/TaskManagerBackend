@@ -5,8 +5,6 @@ pipeline {
         BACKEND_REPO = 'https://github.com/meeSuleman/TaskManagerBackend.git'
         DOCKER_REGISTRY = 'meesuleman/task-manager-backend'
         DOCKER_CREDENTIALS = credentials('dockerhubToken')
-        DOCKER_CREDENTIALS_PSW = 'treble@city'
-        DOCKER_CREDENTIALS_USR = 'meesuleman'
         GITHUB_CREDENTIALS = credentials('GithubToken')
         SONARQUBE_ENV = 'SonarQube' 
     }
